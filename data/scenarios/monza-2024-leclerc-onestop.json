@@ -1,0 +1,79 @@
+{
+  "scenario_id": "monza-2024-leclerc-onestop",
+  "domain": "f1",
+  "title": "Monza 2024: Cover McLaren or commit to the one-stop?",
+  "difficulty": "medium",
+  "source": {
+    "api": "openf1",
+    "session_key": 9590,
+    "meeting_key": 1244,
+    "race": "2024 Italian Grand Prix, Monza",
+    "date": "2024-09-01",
+    "raw_data_dir": "data/raw/monza-2024/"
+  },
+
+  "presented_to_user": {
+    "role": "You are Charles Leclerc's race engineer on the Ferrari pit wall.",
+    "situation": "Italian Grand Prix, Monza. Lap 33 of 53. Leclerc is P2 on hard tires fitted on lap 16 (17 laps old). Oscar Piastri leads on hards fitted on lap 17 (16 laps old). Lando Norris, running behind you, has just pitted for a second set of fresh hards — McLaren appears to be committing to a two-stop race and will likely pit Piastri to cover within the next few laps.",
+    "known_facts": [
+      "Pit-lane transit at Monza costs roughly 24 seconds (measured pit-lane durations this race: 23.7–24.8s).",
+      "The track was resurfaced for 2024; pre-race tire degradation predictions were pessimistic, but so far the hard tire is holding up better than feared.",
+      "Both drivers started on mediums and switched to hards in the lap 14–17 window; all front-runners are on the same hard compound now.",
+      "Monza historically has a low safety-car probability, and there have been no interruptions so far.",
+      "Sainz, in the other Ferrari, is P4 on hards fitted on lap 20.",
+      "20 laps remain after this one."
+    ],
+    "question": "McLaren has just shown its hand with Norris. Do you pit Leclerc for fresh hards to cover the two-stop, or stay out and commit to a one-stop to the flag? Explain your decision and the reasoning behind it — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "Ferrari kept Leclerc out and committed both cars to a one-stop. Leclerc ran his hard tires 38 laps (lap 16 to 53); Sainz ran his 34 laps.",
+    "actual_outcome": "Leclerc won the race. McLaren pitted Piastri on lap 38; he rejoined roughly 18.5 seconds behind Leclerc with 15 laps to go, closed at about 1.0 s/lap on fresher hards (laps 45-52 average: Piastri 82.64s vs Leclerc 83.59s), but fell 2.664 seconds short at the flag. Norris finished P3, +6.153s. There were no safety cars or virtual safety cars.",
+    "decision_rationale_factors": [
+      "The pit math: a second stop costs ~24 seconds. For the two-stop to win, the fresh-tire car needed to out-pace the one-stopper by ~1.2-1.3 s/lap over the final stint. Actual fresh-hard advantage was only ~1.0 s/lap, because degradation on the resurfaced track was lower than pre-race predictions.",
+      "Track position is the prize: staying out converted Leclerc from P2 (behind Piastri) to P1 the moment Piastri pitted. Even at Monza with slipstream and DRS, passing a car with only a ~1 s/lap pace advantage is hard when the leader has clean air.",
+      "Risk asymmetry: covering Norris's stop would have surrendered track position to Piastri with no guarantee of re-passing. Staying out risked a tire cliff in the final laps or a late safety car erasing the gap — but Monza's low SC probability and the observed low degradation made that an acceptable bet.",
+      "Fleet strategy: Ferrari committed both cars, and Sainz's one-stop from lap 20 gave Ferrari a rear-guard; McLaren two-stopped both cars, leaving no McLaren with track position.",
+      "The margin was razor thin: 2.664s after 53 laps. A slightly higher degradation rate, one more lap of the race, or a slow final sector and the call flips from brilliant to wrong. Good grading should recognize this was a positive-expected-value bet, not a certainty."
+    ],
+    "defensible_alternative": "Pitting to cover is not indefensible: pre-race degradation modeling favored two stops, and a tire cliff on 35+ lap old hards was a real scenario. A user who chooses to pit but correctly identifies the ~24s pit loss, the required pace delta, and the track-position sacrifice — and explains why they weight the cliff risk higher — is showing good process with different risk weights. They should score well on reasoning, less well on reading the specific evidence available at lap 33 (observed deg already running below prediction).",
+    "common_mistakes": [
+      "Outcome-free vibes: 'trust the driver / tires feel good' with no reference to pit loss, pace deltas, or laps remaining.",
+      "Treating Monza slipstream as making track position worthless — overtaking still requires a meaningful pace delta.",
+      "Ignoring the safety-car dimension entirely (either as risk to the one-stop or as a free-stop opportunity for the two-stop).",
+      "Covering Norris reflexively without asking whether Norris (behind) or Piastri (ahead) is the actual threat."
+    ]
+  },
+
+  "verified_data_points": {
+    "final_gap_lec_to_pia_s": 2.664,
+    "final_gap_lec_to_nor_s": 6.153,
+    "pia_gap_after_second_stop_s": 18.54,
+    "late_race_pace_delta_s_per_lap": 0.96,
+    "lec_avg_lap_45_52_s": 83.594,
+    "pia_avg_lap_45_52_s": 82.637,
+    "pit_lane_duration_range_s": [23.7, 24.8],
+    "lec_hard_stint_laps": 38,
+    "safety_cars": 0,
+    "stints": {
+      "leclerc_16": [
+        {"compound": "MEDIUM", "laps": "1-15"},
+        {"compound": "HARD", "laps": "16-53"}
+      ],
+      "piastri_81": [
+        {"compound": "MEDIUM", "laps": "1-16"},
+        {"compound": "HARD", "laps": "17-38"},
+        {"compound": "HARD", "laps": "39-53"}
+      ],
+      "norris_4": [
+        {"compound": "MEDIUM", "laps": "1-14"},
+        {"compound": "HARD", "laps": "15-32"},
+        {"compound": "HARD", "laps": "33-53"}
+      ],
+      "sainz_55": [
+        {"compound": "MEDIUM", "laps": "1-19"},
+        {"compound": "HARD", "laps": "20-53"}
+      ]
+    }
+  }
+}

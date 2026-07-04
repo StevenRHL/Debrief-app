@@ -1,0 +1,243 @@
+# Debrief — AWS SAM template. SCAFFOLD / NOT DEPLOYED.
+#
+# Deployment is explicitly gated on the user's greenlight (see SESSION_STATE.md).
+# This template exists so that when that greenlight comes, `sam build && sam deploy`
+# from infra/ is the whole backend deploy — no infrastructure decisions left to make.
+#
+# Design notes:
+# - CodeUri is the project root so the handlers' filesystem loaders (prompts/,
+#   data/scenarios/) work unchanged inside the Lambda package via
+#   DEBRIEF_DATA_ROOT=/var/task. The DynamoDB swap points commented in each
+#   handler (_load_scenario, _store_attempt, _cache_scenario, _list_scenarios)
+#   can then land incrementally — the tables below are ready for them.
+# - The Anthropic key is a NoEcho parameter for scaffold simplicity. Before a
+#   production deploy, move it to Secrets Manager and reference it via a dynamic
+#   ref ({{resolve:secretsmanager:...}}) so it never sits in CloudFormation state.
+# - All resources carry the debrief- prefix per the project's naming convention.
+
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Debrief teach-back learning app — Lambdas, API, tables, auth.
+
+Parameters:
+  AnthropicApiKey:
+    Type: String
+    NoEcho: true
+    Description: Anthropic API key for live grading (move to Secrets Manager for production).
+  ClaudeModel:
+    Type: String
+    Default: claude-opus-4-8
+    Description: Model id used by debrief-grade-attempt.
+  HenrikdevApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: HenrikDev key for real VALORANT match pulls (empty = endpoint returns 502 in real mode).
+  TrackerggAppId:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: tracker.gg app id (TRN-Api-Key) for real CS2 stats.
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 30
+    MemorySize: 256
+    Environment:
+      Variables:
+        MOCK_MODE: "false"          # the deployed stack is the live stack
+        AUTH_MODE: cognito
+        DEBRIEF_DATA_ROOT: /var/task
+        DYNAMODB_TABLE_PREFIX: debrief-
+        COGNITO_USER_POOL_ID: !Ref DebriefUserPool
+        COGNITO_CLIENT_ID: !Ref DebriefUserPoolClient
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins:
+        - "*"                       # tighten to the Vercel domain after first deploy
+      AllowMethods: [GET, POST, OPTIONS]
+      AllowHeaders: [Content-Type, Authorization]
+
+Resources:
+  # ------------------------------------------------------------------ API --- #
+  DebriefApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: debrief-api
+
+  # -------------------------------------------------------------- Lambdas --- #
+  # Serves GET /fetch-scenario?domain=... — the exact route the frontend and
+  # scripts/local_api.py use. Dispatches to the per-domain fetch modules, which
+  # ship in the same package.
+  FetchScenarioRouterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: debrief-fetch-scenario-router
+      CodeUri: ..
+      Handler: lambdas.debrief_fetch_scenario_router.handler
+      Environment:
+        Variables:
+          HENRIKDEV_API_KEY: !Ref HenrikdevApiKey
+          TRACKERGG_APP_ID: !Ref TrackerggAppId
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref ScenariosTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref MatchCacheTable }
+      Events:
+        Get:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /fetch-scenario, Method: GET }
+
+  ListScenariosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: debrief-list-scenarios
+      CodeUri: ..
+      Handler: lambdas.debrief_list_scenarios.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref ScenariosTable }
+      Events:
+        Get:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /list-scenarios, Method: GET }
+
+  GradeAttemptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: debrief-grade-attempt
+      CodeUri: ..
+      Handler: lambdas.debrief_grade_attempt.handler
+      Timeout: 120                 # adaptive thinking on a full rubric can run long
+      MemorySize: 512
+      Environment:
+        Variables:
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          CLAUDE_MODEL: !Ref ClaudeModel
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref AttemptsTable }
+        - DynamoDBReadPolicy: { TableName: !Ref ScenariosTable }
+        - DynamoDBReadPolicy: { TableName: !Ref MatchCacheTable }
+      Events:
+        Post:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /grade-attempt, Method: POST }
+
+  AuthHookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: debrief-auth-hook
+      CodeUri: ..
+      Handler: lambdas.debrief_auth_hook.handler
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:SignUp
+                - cognito-idp:InitiateAuth
+                - cognito-idp:GetUser
+              Resource: !GetAtt DebriefUserPool.Arn
+      Events:
+        Signup:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /auth/signup, Method: POST }
+        Login:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /auth/login, Method: POST }
+        Me:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /auth/me, Method: GET }
+
+  FetchHistoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: debrief-fetch-history
+      CodeUri: ..
+      Handler: lambdas.debrief_fetch_history.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref AttemptsTable }
+        - Statement:
+            - Effect: Allow
+              Action: ["cognito-idp:GetUser"]
+              Resource: !GetAtt DebriefUserPool.Arn
+      Events:
+        Get:
+          Type: HttpApi
+          Properties: { ApiId: !Ref DebriefApi, Path: /history, Method: GET }
+
+  # --------------------------------------------------------------- Tables --- #
+  ScenariosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: debrief-scenarios
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: scenario_id, AttributeType: S }
+        - { AttributeName: domain, AttributeType: S }
+      KeySchema:
+        - { AttributeName: scenario_id, KeyType: HASH }
+      GlobalSecondaryIndexes:
+        - IndexName: domain-index   # debrief-list-scenarios queries this
+          KeySchema:
+            - { AttributeName: domain, KeyType: HASH }
+            - { AttributeName: scenario_id, KeyType: RANGE }
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes: [title, difficulty, source]  # spoiler-safe by construction
+
+  AttemptsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: debrief-attempts
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: user_id, AttributeType: S }
+        - { AttributeName: timestamp, AttributeType: S }
+      KeySchema:                    # debrief-fetch-history queries by user, newest first
+        - { AttributeName: user_id, KeyType: HASH }
+        - { AttributeName: timestamp, KeyType: RANGE }
+
+  MatchCacheTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: debrief-match-cache
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: scenario_id, AttributeType: S }
+      KeySchema:
+        - { AttributeName: scenario_id, KeyType: HASH }
+      TimeToLiveSpecification:      # built scenarios expire; the source APIs are the truth
+        AttributeName: ttl
+        Enabled: true
+
+  # ----------------------------------------------------------------- Auth --- #
+  DebriefUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: debrief-user-pool
+      AutoVerifiedAttributes: []    # no email verification in the first deploy
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+
+  DebriefUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: debrief-web
+      UserPoolId: !Ref DebriefUserPool
+      GenerateSecret: false         # public web client
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH  # what shared/auth.py's initiate_auth uses
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+Outputs:
+  ApiUrl:
+    Description: Base URL for NEXT_PUBLIC_API_BASE on Vercel.
+    Value: !Sub "https://${DebriefApi}.execute-api.${AWS::Region}.amazonaws.com"
+  UserPoolId:
+    Value: !Ref DebriefUserPool
+  UserPoolClientId:
+    Value: !Ref DebriefUserPoolClient
+  ScenariosTableName:
+    Value: !Ref ScenariosTable
+  AttemptsTableName:
+    Value: !Ref AttemptsTable

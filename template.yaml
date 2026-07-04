@@ -1,0 +1,81 @@
+# Debrief — minimal SAM/CloudFormation template: one HTTP API route in front of
+# the EXISTING debrief-grade-handler Lambda.
+#
+# Scope (deliberately narrow — this is NOT the full-stack template in
+# infra/template.yaml): a single `POST /grade` route proxying to an already
+# deployed Lambda, referenced by ARN. This template creates NO new Lambda.
+#
+# CORS is locked to the two origins that actually call the API — the production
+# Vercel app and local dev — not "*".
+#
+# Deploy:  sam build && sam deploy --guided
+# (There are no SAM::Serverless functions to build here, so `sam build` is a
+#  no-op pass-through; the deploy is the meaningful step.)
+
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Debrief — HTTP API POST /grade in front of the existing debrief-grade-handler Lambda.
+
+Parameters:
+  GradeHandlerArn:
+    Type: String
+    Default: arn:aws:lambda:us-east-1:782296987560:function:debrief-grade-handler
+    Description: ARN of the EXISTING grade Lambda to proxy to. Not created by this stack.
+  AllowedOrigins:
+    Type: CommaDelimitedList
+    Default: "https://debrief-app-six.vercel.app,http://localhost:3000"
+    Description: Exact origins allowed by CORS. No wildcard.
+
+Resources:
+  # ------------------------------------------------------------------ API --- #
+  GradeHttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: debrief-grade-api
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins: !Ref AllowedOrigins          # restricted — Vercel prod + localhost only
+        AllowMethods: [POST, OPTIONS]
+        AllowHeaders: [Content-Type, Authorization]
+        MaxAge: 3600
+
+  # Proxy integration to the pre-existing Lambda (by ARN — no Function resource).
+  GradeIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref GradeHttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Ref GradeHandlerArn
+      PayloadFormatVersion: "2.0"
+
+  GradeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref GradeHttpApi
+      RouteKey: "POST /grade"
+      Target: !Sub "integrations/${GradeIntegration}"
+
+  # $default stage with auto-deploy so the route is live immediately.
+  GradeStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref GradeHttpApi
+      StageName: $default
+      AutoDeploy: true
+
+  # Let API Gateway invoke the existing Lambda. Scoped to this API's /grade route.
+  GradeInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref GradeHandlerArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${GradeHttpApi}/*/*/grade"
+
+Outputs:
+  GradeInvokeUrl:
+    Description: Full URL for the POST /grade route.
+    Value: !Sub "https://${GradeHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/grade"
+  ApiId:
+    Description: HTTP API id.
+    Value: !Ref GradeHttpApi

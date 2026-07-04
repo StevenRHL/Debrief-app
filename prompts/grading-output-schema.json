@@ -1,0 +1,30 @@
+{
+  "type": "json_schema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "overall_score": { "type": "integer", "description": "0-100, sum of the four dimension scores" },
+      "verdict": { "type": "string", "enum": ["matched_history", "defensible_alternative", "flawed_process"] },
+      "decision_score": { "type": "integer", "description": "0-20" },
+      "decision_feedback": { "type": "string" },
+      "reasoning_score": { "type": "integer", "description": "0-40" },
+      "reasoning_feedback": { "type": "string" },
+      "risk_score": { "type": "integer", "description": "0-20" },
+      "risk_feedback": { "type": "string" },
+      "calibration_score": { "type": "integer", "description": "0-20" },
+      "calibration_feedback": { "type": "string" },
+      "what_actually_happened": { "type": "string", "description": "The reveal shown to the user after grading" },
+      "key_insight_missed": { "type": "string", "description": "Empty string if nothing material was missed" },
+      "strengths": { "type": "array", "items": { "type": "string" } }
+    },
+    "required": [
+      "overall_score", "verdict",
+      "decision_score", "decision_feedback",
+      "reasoning_score", "reasoning_feedback",
+      "risk_score", "risk_feedback",
+      "calibration_score", "calibration_feedback",
+      "what_actually_happened", "key_insight_missed", "strengths"
+    ],
+    "additionalProperties": false
+  }
+}

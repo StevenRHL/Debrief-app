@@ -1,0 +1,69 @@
+{
+  "scenario_id": "cs2-mock-mirage-r21-eco",
+  "domain": "cs2",
+  "title": "Mirage, round 21: force-buy or full eco?",
+  "difficulty": "medium",
+  "source": {
+    "api": "trackergg",
+    "note": "MOCK DATA — hand-authored fixture in the shape tracker.gg stats support. A real deployment builds scenarios like this from the signed-in user's own match stats via debrief-fetch-cs2-stats; numbers below are realistic but not from a real match.",
+    "match_id": "mock-7d21b4c8-mirage",
+    "map": "Mirage",
+    "round_number": 21
+  },
+
+  "presented_to_user": {
+    "role": "You are calling the buys for your side, playing T on Mirage.",
+    "situation": "Mirage, round 21, you are T side down 9–11 in a best-of-24 (MR12: first to 13). You just lost round 20 after a failed A execute — 4 of your 5 died, one saved an AK. Loss bonus is at 2,400. Your money: you have 2,700, the AK saver has 4,100, the other three have 2,100 / 1,900 / 2,300. A full buy (rifles + kevlar + helmet + utility) needs roughly 4,700 each. CTs just won two in a row and will have full rifles, kits, and utility next round.",
+    "known_facts": [
+      "A force-buy now gets you armor + Galils/MACs and a couple of smokes, no full utility — roughly 3,000 per player against full CT rifles.",
+      "A full eco keeps everyone above 4,900 next round: guaranteed full buy with AWP option at 10–12 or 9–12.",
+      "You are 3 rounds from losing the match: at 9–11, losing two more ends it, so the number of rounds left to spend money in is shrinking.",
+      "Your team's force-buy round win rate this match is 1 of 4; your full-buy win rate is 8 of 13.",
+      "The AK saver means one guaranteed rifle either way.",
+      "If you eco and lose round 21, it is 9–12: every remaining round is an elimination round but you'd play them all with full buys."
+    ],
+    "question": "Do you force-buy round 21 or full-save for a guaranteed buy at round 22? Explain your call — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "The team called the full eco, conceding round 21 to guarantee full buys for every remaining round.",
+    "actual_outcome": "Round 21 was lost as expected (9–12), but the guaranteed full buy won round 22 against the CTs' now-depleted utility (10–12), and the team strung together the buy rounds to force overtime at 12–12 before losing 13–16. The eco didn't win the match, but it converted a 1-in-4 force into three consecutive full-buy rounds at an 8-of-13 win rate. Post-match analysis: forcing at 9–11 with ~2,400 average against full CT buys carried roughly a 20% round win chance; the eco line traded one near-certain loss for full equipment in every elimination round that followed.",
+    "decision_rationale_factors": [
+      "The buy math: force-buy gets ~3,000 loadouts into ~5,500 CT loadouts with kits and full utility — this match's own force win rate (1 of 4) prices that at ~20-25%.",
+      "Elimination-round logic cuts both ways, and the user must engage it: forcing 'because we can't afford to fall further behind' ignores that a failed force makes the NEXT round an eco into match point; the eco guarantees the best possible odds (8 of 13 full-buy rate) in every remaining must-win round.",
+      "The loss-bonus mechanics: at max loss bonus (3,400 after another loss), one more conceded round fully funds rifles, armor, utility AND an AWP — the eco is buying equipment, not conceding hope.",
+      "The AK saver shifts the math less than it appears: one rifle in a 1v5 economy round rarely converts, but preserved into a full buy it adds a free 2,700 to the team bank.",
+      "Clock on the match, not the round: at 9–11 you need 4 of the next 6 rounds. The plan has to maximize win probability across the sequence, not salvage the very next round."
+    ],
+    "defensible_alternative": "The force is defensible if built on the right reasoning: CTs just spent heavily for two rounds and may be utility-poor; a force with armor + SMGs into a CT team that doesn't expect it can catch a thin buy, and MR12's shorter halves genuinely compress the number of saves you can afford. A user who forces but prices the ~20-25% equity, targets the CTs' utility gap, and pre-commits to what a failed force means for round 22 shows real process with a different risk read. They should score well on reasoning, less on calibration — this match's own force/full-buy win rates argued for the eco.",
+    "common_mistakes": [
+      "Panic forcing: 'we're too far behind to save' without doing the sequence math on the remaining rounds.",
+      "Ignoring the team's own in-match force (1/4) and full-buy (8/13) win rates that are sitting in the given facts.",
+      "Treating the AK saver as making the force viable on its own.",
+      "Not mentioning loss bonus mechanics at all — the eco's entire value proposition.",
+      "No falsifier: never naming what would make the force right (e.g. confirmed CT utility dump in round 20)."
+    ]
+  },
+
+  "verified_data_points": {
+    "note": "MOCK values, internally consistent, in the shape tracker.gg round/economy stats support.",
+    "round_number": 21,
+    "score_before_round": "9-11",
+    "format": "MR12",
+    "loss_bonus_current": 2400,
+    "loss_bonus_next": 2900,
+    "team_money": [2700, 4100, 2100, 1900, 2300],
+    "full_buy_cost_per_player_approx": 4700,
+    "force_buy_value_per_player_approx": 3000,
+    "ct_loadout_value_approx": 5500,
+    "force_round_record_this_match": "1-3",
+    "full_buy_round_record_this_match": "8-5",
+    "force_win_probability_est": 0.22,
+    "rounds_after": [
+      {"round": 21, "winner": "ct", "note": "eco conceded, 9-12"},
+      {"round": 22, "winner": "t", "note": "full buy vs depleted CT utility, 10-12"},
+      {"round": 23, "winner": "t", "note": "11-12"},
+      {"round": 24, "winner": "t", "note": "12-12, forced OT; match lost 13-16"}
+    ]
+  }
+}

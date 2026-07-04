@@ -1,0 +1,102 @@
+{
+  "scenario_id": "f1-mock-wet-crossover-slicks",
+  "domain": "f1",
+  "title": "Drying track, lap 28: box for slicks or one more lap on inters?",
+  "difficulty": "hard",
+  "source": {
+    "api": "none",
+    "note": "MOCK DATA — hand-authored fixture. Unlike the Monza 2024 scenario, this is NOT built from OpenF1 data; the circuit is fictional and every number below is invented (internally consistent) for demo purposes. A real deployment replaces this with a scenario derived from a real wet race via debrief-fetch-f1-scenario."
+  },
+
+  "presented_to_user": {
+    "role": "You are the race strategist for the car running P3.",
+    "situation": "Lap 28 of 57 at a 4.9 km circuit. The race started wet; the rain stopped nine laps ago and a dry line is forming everywhere except one damp stretch through the Turn 9–11 complex. Your car is P3 on 12-lap-old intermediates that are starting to overheat on the dry line. The P5 and P6 cars pitted for slicks last lap; first sector times suggest slicks are already close to crossover. P1 and P2 (4.1s and 1.8s up the road) are both still on inters. Your pit wall has to call it now: box this lap for slicks, or stay on inters at least one more lap.",
+    "known_facts": [
+      "Pit loss at this circuit: ~21 seconds from pit entry to rejoining at speed.",
+      "The P5 car's first flying sector on slicks was 1.1s faster than yours; the middle sector (containing the damp T9–11) was 0.4s slower.",
+      "Your inters are losing an estimated 2.0–2.5 s/lap to a car on slicks once the whole lap is dry, and the dry line is spreading each lap.",
+      "Weather radar shows no rain within 40 km for at least the next 25 minutes.",
+      "Inters that overheat on a dry track degrade nonlinearly — lap time falls off a cliff rather than fading gently.",
+      "29 laps remain. The gap behind you to P4 (also still on inters) is 5.2s."
+    ],
+    "question": "Box for slicks now, or stay on inters one more lap? Explain your call — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "The team boxed immediately for slicks. The out-lap through the damp T9–11 was cautious but clean, and crossover arrived exactly one lap later — every car still on inters after that lap lost 2–3 seconds per lap.",
+    "actual_outcome": "Boxing on lap 28 won the race. P1 and P2 stayed out one and two laps longer respectively; both lost more time on overheating inters than the pit stop cost, and the P2 car ran wide on its own out-lap at T10 on cold slicks a lap later than ideal, when the damp patch was smaller but its tyres were colder relative to the field. The car that boxed on 28 cycled to the lead by lap 33 and won by 7.4s. The bet that paid: radar-confirmed no rain plus a spreading dry line means the crossover only moves one way — every lap of delay is pure loss unless rain returns.",
+    "decision_rationale_factors": [
+      "Crossover math: once slicks are within ~0.5s/lap of inters on a drying track with no rain coming, the 21s pit loss is repaid within 8–10 laps at 2.0–2.5 s/lap — and 29 laps remained, nearly three times the payback window.",
+      "The direction of change: a drying track means the slick advantage grows every lap. Waiting for the crossover to be 'obvious' guarantees you pit after the optimum, because the sector times that prove it are already history when you see them.",
+      "Overheating inters fail nonlinearly — the known_facts say cliff, not fade. Staying out is not a 'safe' option; it carries its own tail risk of losing 4+ s/lap with no warning.",
+      "The radar: no rain within 40 km for 25 minutes removes the one scenario (rain returning) where staying on inters wins.",
+      "Track position was recoverable: 21s of pit loss against leaders who must also stop means boxing first is the undercut, not a sacrifice — the classic wet-dry crossover inversion."
+    ],
+    "defensible_alternative": "Staying out exactly one more lap is defensible IF it is argued as buying information at a priced cost: one more lap costs ~1–2s at current deltas, and confirms the damp T9–11 is survivable on slicks by watching the cars that just stopped. A user who stays out but names the cost per lap, commits to boxing next lap regardless, and states that returning rain is the only thing that would keep them on inters is showing sound process with a more conservative information threshold. Staying out with no lap-count commitment, or 'to cover P1/P2', is where it stops being defensible — covering cars that are themselves past the crossover is following them off a cliff.",
+    "common_mistakes": [
+      "Covering the leaders: 'P1 and P2 stayed out, so we stay out' outsources the decision to cars with different incentives — they are defending track position; P3 has everything to gain from the undercut.",
+      "Treating staying out as the low-risk option and ignoring the stated nonlinear inters cliff.",
+      "No engagement with the radar — the entire stay-out case rests on rain returning, and the data says it isn't.",
+      "Vibes-only urgency ('slicks are always faster on a dry line') without pricing the 21s pit loss against the per-lap delta and remaining laps.",
+      "No falsifier: never saying what would flip the call (rain inside 25 minutes, or a slick runner going off in the damp sector)."
+    ]
+  },
+
+  "verified_data_points": {
+    "note": "MOCK values, hand-authored and internally consistent. Fictional circuit — traceable to nothing.",
+    "lap_of_decision": 28,
+    "laps_total": 57,
+    "pit_loss_s": 21,
+    "inters_age_laps": 12,
+    "slick_vs_inter_delta_s_per_lap_dry": [2.0, 2.5],
+    "p5_first_sector_delta_on_slicks_s": -1.1,
+    "p5_middle_sector_delta_on_slicks_s": 0.4,
+    "radar_rain_free_minutes": 25,
+    "gap_to_p1_s": 4.1,
+    "gap_to_p2_s": 1.8,
+    "gap_to_p4_s": 5.2,
+    "winner_boxed_on_lap": 28,
+    "winning_margin_s": 7.4
+  },
+
+  "mock_synth": {
+    "matched": ["box now", "box this lap", "box for slicks", "pit now", "pit this lap",
+                "pit for slicks", "slicks now", "onto slicks", "take the slicks",
+                "stop now", "we box", "box him"],
+    "alternative": ["stay on inters", "stay out", "one more lap", "wait a lap", "wait one lap",
+                    "hold on the inters", "extend on inters", "don't box", "do not box",
+                    "stay on the inters", "another lap"],
+    "features": {
+      "crossover": [["crossover", "2.0", "2.5", "s/lap", "per lap", "pace delta", "sector time",
+                     "1.1s", "faster on slicks", "delta"],
+                    "the crossover math and the slick pace delta", 6],
+      "pitloss": [["21", "pit loss", "pit-loss", "pit lane", "cost of the stop", "cost of a stop",
+                   "pay back", "payback", "repaid"],
+                  "the ~21s pit loss against the laps remaining", 5],
+      "radar": [["radar", "no rain", "rain coming", "rain returns", "weather", "40 km",
+                 "25 minutes", "shower"],
+                "the radar and the rain-return scenario", 5],
+      "cliff": [["cliff", "overheat", "nonlinear", "deg", "falls off", "fall off", "drop off",
+                 "wear"],
+                "the nonlinear inters cliff risk of staying out", 4],
+      "damp": [["damp", "t9", "t10", "t11", "wet patch", "cold slicks", "out-lap", "outlap",
+                "middle sector"],
+               "the damp T9–11 risk on the slick out-lap", 3]
+    },
+    "missing_priority": [
+      ["radar", "the radar — no rain for 25 minutes removes the only scenario where inters win"],
+      ["crossover", "the crossover math: 2.0–2.5 s/lap against a 21s stop pays back in under 10 of the 29 laps left"],
+      ["cliff", "that staying out is NOT the safe option — overheating inters fail off a cliff, not gently"],
+      ["damp", "the damp T9–11 complex — the one genuine cost of boxing first, priced by the P5 car's sectors"],
+      ["falsifier", "an explicit falsifier — what (rain radar, a slick runner going off) would flip your call"]
+    ],
+    "key_insights": [
+      ["crossover", "On a drying track the crossover only moves one way — waiting until slicks are 'obviously' faster guarantees pitting after the optimum."],
+      ["radar", "The whole stay-out case rests on rain returning, and the radar said it wasn't — check the one assumption your option needs."],
+      [null, "Boxing first from P3 was the undercut on leaders who must also stop — 21s of pit loss against 29 laps of 2+ s/lap is not a sacrifice, it's the win condition."]
+    ],
+    "covering_decision_fb": "Clear call to stay on inters — the opposite of the winning call, but committed and actionable. Capped slightly because the radar and the spreading dry line meant the crossover evidence only gets worse for inters from here.",
+    "matched_decision_fb": "Clear call to box for slicks now — committing to the crossover before it is comfortable is exactly the kind of decisive, evidence-led call this dimension rewards.",
+    "risk_hint": "a slow out-lap or an off in the damp T9–11 on cold slicks, or rain arriving inside the payback window"
+  }
+}

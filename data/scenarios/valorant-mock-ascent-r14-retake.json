@@ -1,0 +1,66 @@
+{
+  "scenario_id": "valorant-mock-ascent-r14-retake",
+  "domain": "valorant",
+  "title": "Ascent, round 14: retake B or save?",
+  "difficulty": "medium",
+  "source": {
+    "api": "henrikdev",
+    "note": "MOCK DATA — hand-authored fixture in HenrikDev match shape. A real deployment builds scenarios like this from the signed-in user's own recent matches via debrief-fetch-valorant-match; numbers below are realistic but not from a real match.",
+    "match_id": "mock-9f3c2a1e-ascent",
+    "map": "Ascent",
+    "queue": "competitive",
+    "round_number": 14
+  },
+
+  "presented_to_user": {
+    "role": "You are the in-game leader on the defending side, playing Omen.",
+    "situation": "Ascent, round 14 of a competitive match. Score 7–6 in your favor, first round of the second half was yours. The spike just went down on B site with 38 seconds left in the round. You lost both B defenders in the site hit. Three of you are alive: you (Omen, mid), your Jett (A site, operator), and your Killjoy (rotating from A, rifle). The attackers have four alive and post-planted positions unknown — at least two confirmed on site, one seen lurking market.",
+    "known_facts": [
+      "Your economy: you have 2,900 credits, Jett has 4,200 with an operator, Killjoy has 3,700 with a Vandal. Team bank next round is healthy if you save.",
+      "Their economy: attackers just spent big — this is their gun round; if they take it they hit 8–7 with full guns and you likely face them again on a rebuy.",
+      "Spike planted default on B with 38 seconds on the round clock; defuse takes 7 seconds (3.5 to half).",
+      "You have Omen smokes (both up) and a flash; Killjoy has her ult (lockdown) available but it takes 13 seconds to detain.",
+      "Retaking B means crossing market or mid — the lurker was last seen market 8 seconds ago.",
+      "A 3v4 retake into a planted spike is statistically unfavorable; saving guarantees full loadouts next round at 7–7."
+    ],
+    "question": "Do you commit all three to the B retake, or call the save and concede the round? Explain your call — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "The team called the save. All three players held A/mid positions, denied exit frags, and conceded the round 7–7 with full loadouts and Killjoy ult still banked.",
+    "actual_outcome": "The save paid off across the next two rounds: at 7–7 the defenders won a full-buy round on the back of the preserved operator and Killjoy ult (lockdown forced the attackers off B before contact), then won the follow-up against a broken attacker economy to go 9–7. The attackers' round-14 gun round win gave them one round, not a run. Post-match win probability models put a 3v4 retake into a default B plant with an unknown market lurker at roughly 22–28%; the save line preserved an estimated 61% win chance for round 15.",
+    "decision_rationale_factors": [
+      "The retake math: 3v4 into a planted spike needs you to win multiple duels AND secure a 7-second defuse window. With a lurker cutting market, the effective entry is into crossfires; ~25% round equity against giving up guns worth ~10,900 combined credits.",
+      "Ult economics: Killjoy lockdown is worth far more on a buy round you control (forcing site control cleanly at 7–7) than burned on a low-percentage retake where its 13-second detain exceeds comfortable clock management after crossing mid.",
+      "Score state: 7–6 up means the save keeps you no worse than even with guns; losing a forced retake makes it 6–8 in effect — down a round AND down loadouts, the classic double-loss.",
+      "Information state: two attackers confirmed on site, positions of the other two unknown. Retakes are won on information advantage; here the attackers hold it.",
+      "The operator is the single most valuable item on the map for the defense on Ascent A; feeding it into a B retake crossfire converts a durable structural edge into a coin flip."
+    ],
+    "defensible_alternative": "Committing to the retake is not indefensible IF the user builds it on the right levers: using both Omen smokes to cut the site crossfire, flashing the market lurker's angle, and accepting the fight only on a fast hit before post-plant setups settle (within ~10 seconds). A user who calls the retake but prices the ~25% equity, commits utility in the right order, and names the save as the fallback if first contact is lost is showing sound process with a higher risk appetite. They should score well on reasoning, less on calibration — the numbers here genuinely favored the save.",
+    "common_mistakes": [
+      "Vibes-only aggression: 'we can win any fight' with no engagement with player count, clock, utility, or economy.",
+      "Ignoring the lurker — retake calls that path through market as if it were clear.",
+      "Treating the save as 'giving up' rather than pricing the next-round win probability it buys.",
+      "Burning Killjoy ult in the retake without noting its 13-second detain barely fits the remaining clock after the rotate.",
+      "No falsifier: never stating what information would flip the call (e.g. seeing the lurker rotate onto site makes market crossing safe)."
+    ]
+  },
+
+  "verified_data_points": {
+    "note": "MOCK values, internally consistent, in the shape a HenrikDev round payload supports.",
+    "round_number": 14,
+    "score_before_round": "7-6",
+    "clock_at_plant_s": 38,
+    "defuse_time_s": 7,
+    "alive_defenders": 3,
+    "alive_attackers": 4,
+    "defender_loadout_value_credits": 10900,
+    "kj_ult_detain_s": 13,
+    "retake_win_probability_est": 0.25,
+    "next_round_win_probability_after_save_est": 0.61,
+    "rounds_after": [
+      {"round": 15, "winner": "defenders", "note": "full buy + KJ lockdown"},
+      {"round": 16, "winner": "defenders", "note": "attacker economy broken"}
+    ]
+  }
+}

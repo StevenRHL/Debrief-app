@@ -1,0 +1,107 @@
+{
+  "scenario_id": "cs2-mock-overpass-r19-fake-read",
+  "domain": "cs2",
+  "title": "Overpass, round 19: rotate on the B noise, or hold until it's confirmed?",
+  "difficulty": "hard",
+  "source": {
+    "api": "trackergg",
+    "note": "MOCK DATA — hand-authored fixture. A real deployment builds scenarios from the signed-in user's tracked stats via debrief-fetch-cs2-stats (or, later, demo parsing); numbers below are realistic but not from a real match.",
+    "match_id": "mock-c81f42aa-overpass",
+    "map": "Overpass",
+    "round_number": 19
+  },
+
+  "presented_to_user": {
+    "role": "You are the in-game leader on the CT side.",
+    "situation": "Overpass, round 19, you lead 12–6. Both teams full-buy. You are set up 2-1-2: two B (you and your AWPer), one connector, two A (long and site). At 1:25 on the round clock, smokes and an incendiary land at B — monster and the site entrance — and you hear one flash. Your B partner calls 'they're coming B, rotate someone'. But you have seen no bodies, no bomb, and heard no footsteps closer than monster. All half the Ts have been defaulting until 1:10–1:00 and hitting late. Your connector player reports it's quiet mid. You have to call it now: pull a player from A to stack B, or hold the 2-1-2 until you get a confirm.",
+    "known_facts": [
+      "Utility seen at B so far: two smokes and one incendiary, one flash heard. A committed B execute from this team has averaged 5–6 pieces of utility in this match; their fakes have averaged 2–3.",
+      "No bodies and no bomb have been spotted at B. The bomb was last seen mid-T spawn on your connector player's early peek.",
+      "This T side's timing pattern all half: default until 1:10–1:00, then hit. It is currently 1:25 — 15+ seconds earlier than every real hit they have thrown.",
+      "Rotating your A-long player to B takes ~13 seconds; rotating him back takes the same. A 1-3-1 A side versus a full A execute this match has lost the site before rotations arrive twice.",
+      "Your AWPer holds the monster angle — a real B contact must cross his crosshair. He has opening-picked 4 of 6 B hits this match.",
+      "You have won both previous retakes at A this map when the site was held 2-strong at contact; you have won 0 of 2 when it was held 1-strong."
+    ],
+    "question": "Do you pull from A to answer the B utility now, or hold the 2-1-2 until you see a body or the bomb? Explain your call — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "The call was to hold the 2-1-2 and demand a confirm: nobody rotated on the utility alone; the connector player shaded one step toward B heaven for a faster answer IF a body appeared, without leaving mid.",
+    "actual_outcome": "It was a fake. The real hit came at A 14 seconds later — four Ts and the bomb through long with a full utility set. Because both A players were still home, the long player got the opening kill off his one-way smoke, the site 2v4 held long enough for the connector and one B player to arrive, and the round ended 12–7 CT (4v2 retake never materialized; the T hit died on entry). The utility read was the tell: 2–3 pieces matches this team's established fake pattern, 5–6 their real executes — and no bomb, no bodies, 15 seconds ahead of their every real hit this half. Post-round, holding was modeled at ~68% win; the early B rotate (leaving A 1-strong against the real hit) at ~35%, consistent with this map's own 0-for-2 record on 1-strong site holds.",
+    "decision_rationale_factors": [
+      "Utility accounting: this team's own in-match pattern — fakes average 2–3 pieces, executes 5–6 — made the B utility a coin the data had already weighted toward fake.",
+      "Confirm hierarchy: bodies and bomb outrank noise. Smoke and fire cost the Ts 900 credits to throw; your rotation costs a 13-second one-way trip that the real hit is designed to spend.",
+      "Timing tells: every real hit this half came after 1:10; utility at 1:25 is out of pattern for an execute and in pattern for buying rotation-bait time.",
+      "The asymmetry of the error: over-rotating loses the A site outright (0-of-2 on 1-strong holds), while under-rotating still leaves a 2v-few B contact that the monster AWP (4-of-6 opening picks) is specifically positioned to stall until help arrives.",
+      "Cheap insurance existed that wasn't a rotation: shading the connector player one step toward heaven cut the response time to a REAL B hit without surrendering mid or A."
+    ],
+    "defensible_alternative": "Rotating early is defensible IF it is argued from the score state as risk management rather than from the noise: at 12–6 with a big lead, paying a small equity cost to never lose a site to a fast B execute is a coherent 'don't lose the winnable map' line — especially if the user prices what they're giving up at A, sends the CLOSEST player (connector, not A-long), and commits to rotating back on an A confirm. A user who rotates because 'utility means they're coming' — reading the noise as information the utility count contradicts — is where it stops being defensible.",
+    "common_mistakes": [
+      "Treating utility as a confirm: rotating on smoke and fire with no bodies and no bomb is answering 900 credits of bait with the exact 13-second trip it was thrown to buy.",
+      "Ignoring the team's own in-match patterns sitting in the facts — the fake/execute utility counts and the timing tell.",
+      "Rotating the WRONG player: pulling A-long (the 13-second trip that breaks the 2-strong A hold) instead of shading the connector.",
+      "Symmetric-risk thinking: treating over- and under-rotation as equal errors when the map's own record (0-of-2 on 1-strong holds, AWP 4-of-6 at monster) says they are not.",
+      "No falsifier — never naming the confirm (body, bomb, or a third+ utility piece) that would flip them to a full rotation."
+    ]
+  },
+
+  "verified_data_points": {
+    "note": "MOCK values, internally consistent. Not from a real match.",
+    "round_number": 19,
+    "score_before_round": "12-6",
+    "clock_at_utility_s": 85,
+    "utility_seen_at_b": {"smokes": 2, "incendiary": 1, "flashes_heard": 1},
+    "this_team_fake_utility_avg": [2, 3],
+    "this_team_execute_utility_avg": [5, 6],
+    "real_hit_timing_this_half": "after 1:10",
+    "rotation_time_a_long_to_b_s": 13,
+    "awp_opening_pick_rate_b_hits": "4 of 6",
+    "one_strong_site_holds_this_map": "0 of 2",
+    "two_strong_site_holds_this_map": "2 of 2",
+    "actual_hit": {"site": "A", "seconds_after_b_utility": 14, "result": "CT hold, 12-7"},
+    "post_round_model_hold_win_pct": 0.68,
+    "post_round_model_early_rotate_win_pct": 0.35
+  },
+
+  "mock_synth": {
+    "matched": ["hold the 2-1-2", "hold the setup", "don't rotate", "do not rotate", "hold until",
+                "wait for a confirm", "wait for the confirm", "need a body", "see the bomb",
+                "stay home", "hold positions", "it's a fake", "its a fake", "read it as a fake",
+                "call the fake", "no rotate"],
+    "alternative": ["rotate now", "pull from a", "stack b", "send one b", "rotate early",
+                    "answer the utility", "rotate someone", "go help b", "reinforce b",
+                    "rotate the long player", "play it safe and rotate"],
+    "features": {
+      "utilread": [["2-3", "2 to 3", "5-6", "5 to 6", "utility count", "piece", "900 credit",
+                    "utility pattern", "only two smokes", "half their util", "util they"],
+                   "the utility-count read against this team's own fake and execute patterns", 6],
+      "confirm": [["no bodies", "no body", "no bomb", "bomb was last seen", "confirm",
+                   "bodies or bomb", "information", "seen at b", "footsteps"],
+                  "the confirm hierarchy — bodies and bomb over noise", 5],
+      "timing": [["1:25", "1:10", "timing", "too early", "15 seconds earlier", "out of pattern",
+                  "every real hit", "hit late", "their pattern"],
+                 "the timing tell against this half's real hits", 5],
+      "asymmetry": [["0 of 2", "0-of-2", "4 of 6", "4-of-6", "asymmetr", "1-strong", "one strong",
+                     "2-strong", "two strong", "lose the site outright", "awp holds", "monster angle"],
+                    "the asymmetry of the two errors, priced from this map's own numbers", 4],
+      "insurance": [["shade", "connector", "one step", "heaven", "closest player", "halfway",
+                     "cheap insurance", "cut the response"],
+                    "the cheap insurance option that isn't a full rotation", 3]
+    },
+    "missing_priority": [
+      ["utilread", "the utility accounting — 2–3 pieces matches their fakes, 5–6 their executes, and you saw three"],
+      ["confirm", "the confirm hierarchy: no bodies, no bomb — smoke and fire are 900 credits of noise"],
+      ["asymmetry", "the error asymmetry: over-rotating loses A outright (0-of-2 on 1-strong holds); under-rotating still leaves the monster AWP stalling"],
+      ["timing", "the timing tell — utility at 1:25 is 15+ seconds out of pattern for this team's real hits"],
+      ["falsifier", "an explicit falsifier — the confirm (body, bomb, more utility) that flips you to a full rotation"]
+    ],
+    "key_insights": [
+      ["utilread", "The tell was already quantified in the facts: this team fakes with 2–3 pieces and executes with 5–6 — the B utility was a weighted coin, not a mystery."],
+      ["asymmetry", "The two errors are not the same size: rotating early loses a site outright, holding late still leaves a positioned AWP and a 13-second response — price the asymmetry, not just the fear."],
+      [null, "Rotations should be bought with confirms, not noise — smoke and fire cost the Ts 900 credits precisely because your 13-second trip is worth more."]
+    ],
+    "covering_decision_fb": "Clear call to rotate and answer the B utility — the opposite of the winning call, but committed and actionable. Capped slightly because the utility count, the timing, and the missing bomb all pointed at the fake.",
+    "matched_decision_fb": "Clear call to hold the setup and demand a confirm — refusing to spend a rotation on noise is exactly the disciplined, evidence-led call this dimension rewards.",
+    "risk_hint": "the one time the low-utility look is real and the B pair loses the site waiting for a confirm, or a slow answer if the bomb does appear at B"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "scenario_id": "valorant-mock-split-r9-tempo",
+  "domain": "valorant",
+  "title": "Split, round 9: fast B off the pick, or stay on the default?",
+  "difficulty": "medium",
+  "source": {
+    "api": "henrikdev",
+    "note": "MOCK DATA — hand-authored fixture in HenrikDev match shape. A real deployment builds scenarios like this from the signed-in user's own recent matches via debrief-fetch-valorant-match; numbers below are realistic but not from a real match.",
+    "match_id": "mock-4b7d81c0-split",
+    "map": "Split",
+    "queue": "competitive",
+    "round_number": 9
+  },
+
+  "presented_to_user": {
+    "role": "You are the in-game leader on the attacking side, playing Sova.",
+    "situation": "Split, round 9, score 4–4, both teams on full buys. Your team is 40 seconds into a slow default: you hold mid-top with your Raze, your Omen and Jett are lurking A ramp, your Sage is with you. Your recon dart just found the CT mid player and your Raze converted — it's 5v4 with 45 seconds on the round clock. The dead player was the mid-connector defender, so the door between you and B site is currently uncontested. You believe B is now held by one defender plus whoever rotates. Your slow default was building toward a late A hit.",
+    "known_facts": [
+      "45 seconds left on the round clock; a B execute through mid takes roughly 15 seconds from your current positions, a spike plant about 5 more.",
+      "CT rotations from A to B on Split take 10–12 seconds through heaven; the defenders confirmed your mid presence when their player dropped.",
+      "Your utility: Sova dart used, shock darts up; Raze has satchels and grenade; Omen smokes both up (but he is A ramp, ~14 seconds from B); Sage wall and slows up, with you in mid.",
+      "The A-lurk pair (Omen, Jett) is currently applying pressure — two defenders are anchored A because of them.",
+      "Your team's planted-spike conversion this match: 3 wins in 4 plants. On rounds with no plant you are 1 for 3.",
+      "The B site defender is a Cypher who has been playing retake setups all half, not contact holds."
+    ],
+    "question": "Do you call the fast B hit off the pick, or keep developing the slow A default you planned? Explain your call — what are you weighing, what are you betting on, and what would make you wrong?"
+  },
+
+  "ground_truth": {
+    "actual_decision": "The team called the fast B hit immediately: Sage walled the heaven rotation line, Raze satcheled onto site, and the spike was down 21 seconds after the mid pick with a 5v4 post-plant.",
+    "actual_outcome": "The fast B call won the round. The Cypher fell back to a retake setup without contesting the hit (as his half-long pattern suggested), and the A-anchored defenders arrived 4 seconds after the plant into a set 5v4 post-plant crossfire — the retake died 3v5. The 10–12 second heaven rotation was exactly the window the call exploited: hitting inside it meant taking a 1v4 site fight instead of a 3v5 one. Post-round, the slow-default line was modeled at roughly 45% (late A hit into two anchored defenders plus rotations, no plant in 1 of 3 attempts this match); the fast B line at roughly 70% (5v4, uncontested mid door, retake-passive anchor, 3-of-4 post-plant conversion).",
+    "decision_rationale_factors": [
+      "Man-advantage windows decay: 5v4 is worth the most in the 10–12 seconds before the defense re-anchors. The value of the pick is not the number, it's the window — and windows close.",
+      "The pick was positional, not just numerical: the dead player was the mid-connector defender, which converts mid control into a free approach to B. A random pick elsewhere would not justify the same tempo change.",
+      "The team's own conversion stats pointed at playing for the plant: 3-of-4 with spike down versus 1-of-3 without. The fast hit maximizes plant probability; the slow default risks another no-plant round.",
+      "Utility check before tempo check: Sage wall for the heaven rotation line and Raze site-clear utility were both up and both mid — the two agents the hit needs were already in position. The A-lurk pair did not need to arrive for the plant, only for the post-plant.",
+      "The clock: 45 seconds fits hit-plus-post-plant comfortably; it does NOT comfortably fit continuing the default, re-grouping, and still having spike-down time if the late A hit stalls."
+    ],
+    "defensible_alternative": "Staying on the slow A default is defensible IF it is argued from the A-side investment: two defenders were anchored on the lurk pair, and a coordinated 5-man A hit off that pressure — using the man advantage where your utility ISN'T split — is a real line. A user who keeps the default but names the cost (the mid window closing, the rotation re-anchoring), commits to hitting A before the clock forces a rushed plant, and prices the no-plant risk their own 1-of-3 stat carries, is showing sound process with a preference for the prepared hit over the improvised one. 'Stick to the plan' with no engagement with what the pick changed is where it stops being defensible.",
+    "common_mistakes": [
+      "Treating the pick as just a number (5v4) rather than a positional fact — the mid-connector door being open is what makes B fast, not the man count.",
+      "Ignoring the window: calling the B hit but 'after we regroup', which arrives exactly when the 10–12 second rotation has re-anchored the site.",
+      "Vibes-only tempo ('we're up a man, go go go') with no utility check — hitting a site with the Omen smokes 14 seconds away and no plan for heaven.",
+      "Ignoring the team's own plant-conversion numbers sitting in the facts.",
+      "No falsifier — never naming what would keep them on the default (e.g. the dead defender being a flex player whose B anchor is still home)."
+    ]
+  },
+
+  "verified_data_points": {
+    "note": "MOCK values, internally consistent, in the shape a HenrikDev round payload supports.",
+    "round_number": 9,
+    "score_before_round": "4-4",
+    "clock_at_pick_s": 45,
+    "players_alive": "5v4",
+    "b_execute_time_s": 15,
+    "plant_time_s": 5,
+    "ct_rotation_heaven_s": [10, 12],
+    "plant_conversion_this_match": "3 of 4",
+    "no_plant_rounds_this_match": "1 of 3",
+    "time_pick_to_plant_actual_s": 21,
+    "post_round_model_fast_b_win_pct": 0.70,
+    "post_round_model_slow_default_win_pct": 0.45
+  },
+
+  "mock_synth": {
+    "matched": ["fast b", "hit b", "go b", "b now", "take b", "execute b", "b execute",
+                "off the pick", "punish the rotation", "hit now", "go now", "take the site now",
+                "convert the pick", "play the window"],
+    "alternative": ["slow default", "stay on the default", "keep the default", "stick to the plan",
+                    "hit a", "go a", "a hit", "late a", "regroup", "re-group", "keep developing",
+                    "stay patient", "play it out"],
+    "features": {
+      "window": [["window", "10 second", "12 second", "10-12", "rotation", "rotate", "re-anchor",
+                  "reanchor", "before they", "decay", "tempo"],
+                 "the decaying man-advantage window against the heaven rotation", 6],
+      "position": [["connector", "mid door", "mid control", "positional", "who died", "mid player",
+                    "the door", "free approach", "uncontested"],
+                   "what the specific pick opened positionally", 5],
+      "plant": [["3 of 4", "3-of-4", "1 of 3", "1-of-3", "conversion", "post-plant", "plant rate",
+                 "spike down", "play for the plant", "70%", "45%"],
+                "the team's own plant-conversion numbers", 5],
+      "utility": [["sage wall", "satchel", "smokes", "utility check", "omen is", "14 seconds",
+                   "wall off", "heaven", "util"],
+                  "the utility state and who is actually in position", 4],
+      "clock": [["45 second", "clock", "seconds left", "15 second", "time to plant",
+                 "run out of time", "time the hit"],
+                "the clock math for the hit versus the default", 3]
+    },
+    "missing_priority": [
+      ["window", "the window — a 5v4 is worth the most in the 10–12 seconds before the defense re-anchors"],
+      ["position", "what the pick actually opened: the dead mid-connector defender is a free door to B, not just a number"],
+      ["plant", "your own numbers in the facts — 3-of-4 with the spike down, 1-of-3 without"],
+      ["utility", "the utility check: Sage and Raze are mid and ready; the Omen smokes are 14 seconds away"],
+      ["falsifier", "an explicit falsifier — what would keep you on the default"]
+    ],
+    "key_insights": [
+      ["window", "The value of a pick is the window it opens, not the number it changes — hitting inside the 10–12 second rotation meant a 1v4 site fight instead of a 3v5 retake."],
+      ["plant", "The strongest evidence was already yours: 3-of-4 with the spike planted, 1-of-3 without. The fast hit is the play-for-the-plant call."],
+      [null, "Tempo calls are utility checks first: the hit worked because the wall and the site-clear were already mid — the same call with the smokes 14 seconds away is a different call."]
+    ],
+    "covering_decision_fb": "Clear call to stay on the default — the opposite of the round-winning call, but committed and coherent. Capped slightly because the pick specifically opened B and the advantage window was decaying while the default developed.",
+    "matched_decision_fb": "Clear call to convert the pick into the fast B hit — changing tempo the moment the situation changes is exactly the committed, evidence-led call this dimension rewards.",
+    "risk_hint": "the Cypher contact-holding for once instead of falling back, or the B hit arriving just after the heaven rotation beats it"
+  }
+}

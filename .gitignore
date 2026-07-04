@@ -1,0 +1,29 @@
+# Secrets — NEVER commit. The Anthropic key lives here.
+.env
+.env.*
+!.env.example
+!frontend/.env.local.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+
+# OS / editor
+.DS_Store
+
+# Local Claude Code settings (machine-specific permissions)
+.claude/
+
+# Local attempt storage (mock-mode _store_attempt output; DynamoDB on deploy)
+results/attempts-local.jsonl
+
+# SAM build artifacts
+.aws-sam/

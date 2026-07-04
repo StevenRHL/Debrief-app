@@ -1,0 +1,4 @@
+# Real-mode grading only. The entire local pipeline (mock mode: stress test,
+# local API, tests, frontend backend) runs on the standard library with none of
+# this installed — `anthropic` is imported lazily and only when MOCK_MODE is off.
+anthropic>=0.40
